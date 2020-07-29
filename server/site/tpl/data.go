@@ -1,26 +1,32 @@
-// Package data represents the data *that is given to a template*.
-package tpldata
+package tpl
 
 import (
 	"net/http"
-	"strconv"
-
-	"github.com/MarkRosemaker/go-cartesian/points/point"
-	serverdata "github.com/MarkRosemaker/go-cartesian/server/data"
 )
 
-// Data is the data object that will be given to the template of a page.
-type Data struct {
-	Req *http.Request
-	*serverdata.Data
+// DataFunc is a function which return is given to a template.
+// Since the data for a template depends on the request, that is the input to the function.
+type DataFunc func(*http.Request) interface{}
+
+// StdDataFunc is a simple DataFunc that just returns the Request in a struct to the template, i.e. in a template, we can use '{{ .Request }}'.
+func StdDataFunc(r *http.Request) interface{} {
+	return struct {
+		Request *http.Request
+	}{r}
 }
+
+// Data is the data object that will be given to the template of a page.
+// type Data struct {
+// 	Req *http.Request
+// 	*serverdata.Data
+// }
 
 // New creates a new data object from a context and request.
-func New(req *http.Request) *Data {
-	return &Data{req, serverdata.Get()}
-}
+// func New(req *http.Request) *Data {
+// 	return &Data{req, serverdata.Get()}
+// }
 
-// add 
+// add
 
 // Neighbors returns all points within radius.
 // func (d *Data) Neighbors() point.Points {

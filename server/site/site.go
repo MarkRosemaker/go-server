@@ -11,15 +11,15 @@ import (
 
 	_filepath "github.com/MarkRosemaker/go-server/server/filepath"
 
-	"github.com/MarkRosemaker/go-server/server/data"
 	"github.com/MarkRosemaker/go-server/server/site/content"
+	"github.com/MarkRosemaker/go-server/server/site/tpl"
 )
 
 // ErrNoContentSource reports that no content source was provided in the server options.
 var ErrNoContentSource error = errors.New("no content source provided")
 
 // InitContent initializes the content from a folder of templates and files.
-func InitContent(src string, d data.Data) error {
+func InitContent(src string, df tpl.DataFunc) error {
 	if src == "" {
 		return ErrNoContentSource
 	}
@@ -54,7 +54,7 @@ func InitContent(src string, d data.Data) error {
 				url = strings.TrimSuffix(url, base)
 
 				// create page from template
-				h, err = content.NewPage(path)
+				h, err = content.NewPage(path, url, df)
 				if err != nil {
 					return err
 				}

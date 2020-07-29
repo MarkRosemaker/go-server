@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/MarkRosemaker/go-server/server/api"
-	"github.com/MarkRosemaker/go-server/server/data"
 	"github.com/MarkRosemaker/go-server/server/filepath"
+	"github.com/MarkRosemaker/go-server/server/site/tpl"
 )
 
 // Options is a struct holding options for our server.
@@ -12,8 +12,8 @@ type Options struct {
 	Address string
 	// The source to the website content.
 	ContentSource string
-	// The server data.
-	data.Data
+	// The data given to a template as a function of the request.
+	TemplateDataFunc tpl.DataFunc
 	// API Endpoints we want to serve.
 	api.Endpoints
 	// Whether we want to log verbosely.
@@ -26,10 +26,12 @@ func (o *Options) resolve() {
 
 	if o.Address == "" {
 		o.Address = ":8080"
+	} else {
+		// TODO: make sure it's valid
 	}
 
-	if o.Data == nil {
-		o.Data = new(data.None)
+	if o.TemplateDataFunc == nil {
+		o.TemplateDataFunc = tpl.StdDataFunc
 	}
 
 	if o.Endpoints == nil {
