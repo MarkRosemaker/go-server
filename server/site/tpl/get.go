@@ -7,12 +7,7 @@ import (
 	"html/template"
 )
 
-// IsTemplate checks wheather the file is a temlpate or not.
-func IsTemplate(path string) bool {
-	// TODO
 
-	return true
-}
 
 // GetTemplate clones the base template and adds a parsed template from the path.
 func GetTemplate(path string) (*template.Template, error) {

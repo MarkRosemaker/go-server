@@ -1,6 +1,9 @@
 package api
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 // An Endpoint is an api endpoint.
 type Endpoint struct {
@@ -12,6 +15,11 @@ type Endpoint struct {
 
 // Handle registers the endpoint in the DefaultServeMux.
 func (ep Endpoint) Handle() {
+	// might not work without suffix
+	if !strings.HasSuffix(ep.URL, "/") {
+		ep.URL += "/"
+	}
+
 	http.HandleFunc(ep.URL, ep.HandlerFunc)
 }
 
