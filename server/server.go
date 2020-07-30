@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -10,7 +11,7 @@ import (
 // Run runs the server with the given options.
 func Run(o Options) {
 	if o.Verbose {
-		log.Printf("initializing server")
+		log.Println("initializing server")
 	}
 
 	// "clean" options
@@ -35,7 +36,8 @@ func Run(o Options) {
 
 	// start the server
 	if o.Verbose {
-		log.Printf("starting server")
+		log.Println("starting server")
+		fmt.Printf("Visit the server at http://localhost%s.\n", o.Address)
 	}
 	panic(http.ListenAndServe(o.Address, nil))
 }

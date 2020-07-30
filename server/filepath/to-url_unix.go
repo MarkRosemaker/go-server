@@ -11,4 +11,6 @@ import (
 )
 
 // ToURL turns a file path into a relative url path.
-func ToURL filepath.Clean
+func ToURL(path string) string {
+	return filepath.Clean(path)
+}
