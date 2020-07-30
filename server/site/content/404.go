@@ -14,7 +14,7 @@ type notFoundPage struct {
 	*page
 }
 
-// NewNotFoundPage returns a new
+// NewNotFoundPage returns a new page that can be shown if another page can't be found.
 func NewNotFoundPage(path, url string, data tpl.DataFunc) (http.Handler, error) {
 	p, err := newPage(path, url, data)
 	if err != nil {

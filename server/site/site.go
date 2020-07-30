@@ -3,7 +3,6 @@ package site
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,6 +11,7 @@ import (
 	_filepath "github.com/MarkRosemaker/go-server/server/filepath"
 
 	"github.com/MarkRosemaker/go-server/server/site/content"
+	"github.com/MarkRosemaker/go-server/server/site/content/notfound"
 	"github.com/MarkRosemaker/go-server/server/site/tpl"
 )
 
@@ -45,22 +45,30 @@ func InitContent(src string, df tpl.DataFunc) error {
 			// initialize the page or file
 			var h http.Handler
 
-			base := filepath.Base(path)
-			name := strings.TrimSuffix(base, filepath.Ext(base))
-
-			switch name {
-			case "index":
-				// remove base from url
-				url = strings.TrimSuffix(url, base)
+			switch info.Name() {
+			case "index.html":
+				// remove name from url
+				url = strings.TrimSuffix(url, info.Name())
 
 				// create page from template
 				h, err = content.NewPage(path, url, df)
 				if err != nil {
 					return err
 				}
-			case "404":
-				//  serve custom 404 page
-				log.Printf("custom 404 pages not implemented yet")
+
+			case "404.html":
+				// remove name from url
+				url = strings.TrimSuffix(url, "404.html")
+
+				// create page from template
+				h, err = content.NewNotFoundPage(path, url, df)
+				if err != nil {
+					return err
+				}
+
+				// serve as custom 404
+				notfound.Handle(url, h)
+				return nil
 			default:
 				// just serve as standard file
 				h, err = content.NewFile(path)
@@ -69,7 +77,6 @@ func InitContent(src string, df tpl.DataFunc) error {
 				}
 			}
 
-			// serve the page when called
 			http.Handle(url, h)
 
 			return nil
