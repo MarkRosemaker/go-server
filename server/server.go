@@ -16,13 +16,13 @@ func Run(o Options) {
 	// "clean" options
 	o.resolve()
 
-	// // load server data
-	// if err := o.Data.Load(); err != nil {
-	// 	log.Fatalf("error loading server data: %s", err)
-	// }
+	// initilizing endpoints, e.g. loading necessary data
+	if err := o.Endpoints.Init(o.Verbose, o.EndpointsInitConcurrently); err != nil {
+		log.Fatalf("error initializing endpoints: %s", err)
+	}
 
 	// register the API endpoints
-	o.Endpoints.Handle()
+	o.Endpoints.Register()
 
 	// initialize the content of the site
 	if err := site.InitContent(o.ContentSource, o.TemplateDataFunc); err != nil {

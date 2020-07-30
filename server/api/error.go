@@ -1,8 +1,10 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -59,7 +61,7 @@ func (e Error) Error() string {
 	return fmt.Sprintf("%+v", e)
 }
 
-// IsAPIError checks if the input is an api.Error.
+// IsAPIError checks if the input is an api.Error for use in templates.
 //
 // It also returns true if it's the JSON represenation of one,
 // so we can use this function in templates.
@@ -71,7 +73,7 @@ func IsAPIError(d interface{}) bool {
 		if s == "" {
 			return false
 		}
-		// TODO test
+		// todo test
 		var e Error
 		dec := json.NewDecoder(strings.NewReader(s))
 		err := dec.Decode(&e)
@@ -83,4 +85,29 @@ func IsAPIError(d interface{}) bool {
 	default:
 		return false
 	}
+}
+
+// ErrBadRequest returns an api.Error with status bad request and the error message.
+func ErrBadRequest(err error) Error {
+	return NewErrorNow(
+		http.StatusBadRequest,
+		err.Error(),
+		"")
+}
+
+// ErrWrap wraps an eror into an api.Error struct.
+func ErrWrap(err error) Error {
+	// is already wrapped
+	if w, ok := err.(Error); ok {
+		return w
+	}
+
+	if err == context.DeadlineExceeded {
+		// "The 408 (Request Timeout) status code indicates that the server did not receive a complete request message within the time that it was prepared to wait."
+		return NewErrorNow(http.StatusRequestTimeout, "", "")
+	}
+
+	// log but don't leak information
+	log.Printf("api.ErrWrap called to wrap error: %s", err)
+	return NewErrorNow(http.StatusInternalServerError, "unknown error", "")
 }

@@ -6,8 +6,9 @@ import (
 	"net/http"
 )
 
-// WriteJSON writes an interface as a JSON file to the ResponseWriter.
-func WriteJSON(w http.ResponseWriter, d interface{}) {
+// writeJSON writes an interface as a JSON file to the ResponseWriter.
+func writeJSON(w http.ResponseWriter, d interface{}) {
+
 	// for errors, write status code
 	if err, ok := d.(Error); ok {
 		if err.StatusCode != 0 {

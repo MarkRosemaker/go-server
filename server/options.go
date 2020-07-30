@@ -15,7 +15,9 @@ type Options struct {
 	// The data given to a template as a function of the request.
 	TemplateDataFunc tpl.DataFunc
 	// API Endpoints we want to serve.
-	api.Endpoints
+	Endpoints api.Endpoints
+	// Set to true if you want to initialize the endpoints concurrently.
+	EndpointsInitConcurrently bool
 	// Whether we want to log verbosely.
 	Verbose bool
 }
@@ -26,8 +28,6 @@ func (o *Options) resolve() {
 
 	if o.Address == "" {
 		o.Address = ":8080"
-	} else {
-		// TODO: make sure it's valid
 	}
 
 	if o.TemplateDataFunc == nil {

@@ -76,7 +76,9 @@ func (p page) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (p page) executeTemplate(w http.ResponseWriter, req *http.Request) error {
 	// execute the template into a buffer
 	// otherwise, we run into problems if template is not executed
-	// todo: explore effects on performance
+	// todo: explore effects on performance; we should write our templates in such a way that they don't break in the first place, after all
+	// idea: maybe decide according to which phase of development we're in, the binary could be compiled using certain build flags
+
 	var b bytes.Buffer
 	err := p.tpl.ExecuteTemplate(&b, p.tplName, p.data(req))
 	if err != nil {
