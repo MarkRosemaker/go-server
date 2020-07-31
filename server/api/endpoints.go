@@ -4,6 +4,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// Endpoints are a slice of API endpoints.
 type Endpoints []Endpoint
 
 // Init initializes all endpoints, either concurrently or one after the other.
