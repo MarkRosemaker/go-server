@@ -26,18 +26,13 @@ type Error struct {
 
 	// optional
 	Detail string `json:"detail,omitempty"`
-
-	// todo: would it be helpful?
-	// URL string `json:"path,omitempty"`
 }
 
 // NewErrorNow creates a new api error message that can be sent to the user.
 // It also has a timestamp of the current time.
 func NewErrorNow(code int,
 	msg, detail string) Error {
-	e := NewError(code,
-		// url,
-		msg, detail)
+	e := NewError(code, msg, detail)
 	e.TimeStamp = time.Now().Format(time.RFC3339)
 	return e
 }
@@ -51,14 +46,16 @@ func NewError(code int,
 		StatusText: http.StatusText(code),
 		Message:    msg,
 		Detail:     detail,
-		// URL:        url,
 	}
 }
 
 // implement error interface
 
 func (e Error) Error() string {
-	return fmt.Sprintf("%+v", e)
+	if e.Message == "" {
+		return fmt.Sprintf("%d %s", e.StatusCode, e.StatusText)
+	}
+	return fmt.Sprintf("%d %s: %s", e.StatusCode, e.StatusText, e.Message)
 }
 
 // IsAPIError checks if the input is an api.Error for use in templates.
