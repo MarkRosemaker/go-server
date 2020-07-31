@@ -38,9 +38,7 @@ func NewErrorNow(code int,
 }
 
 // NewError creates a new api error message that can be sent to the user.
-func NewError(code int,
-	// url,
-	msg, detail string) Error {
+func NewError(code int,	msg, detail string) Error {
 	return Error{
 		StatusCode: code,
 		StatusText: http.StatusText(code),
