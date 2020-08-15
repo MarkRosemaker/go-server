@@ -18,18 +18,21 @@ type Success struct {
 
 	// message for the user
 	Message string `json:"message,omitempty"`
+
+	// any interface we want to display
+	Object interface{} `json:"*,omitempty"`
 }
 
 // NewSuccessNow creates a new api success message that can be sent to the user.
 // It also has a timestamp of the current time.
-func NewSuccessNow(code int, format string, a ...interface{}) Success {
-	s := NewSuccess(code, format, a...)
+func NewSuccessNow(code int, v interface{}, format string, a ...interface{}) Success {
+	s := NewSuccess(code, v, format, a...)
 	s.TimeStamp = time.Now().Format(time.RFC3339)
 	return s
 }
 
 // NewSuccess creates a new api success message that can be sent to the user.
-func NewSuccess(code int, format string, a ...interface{}) Success {
+func NewSuccess(code int, v interface{}, format string, a ...interface{}) Success {
 	var txt string
 	if code != 0 {
 		txt = http.StatusText(code)
@@ -38,5 +41,6 @@ func NewSuccess(code int, format string, a ...interface{}) Success {
 		StatusCode: code,
 		StatusText: txt,
 		Message:    fmt.Sprintf(format, a...),
+		Object:     v,
 	}
 }
