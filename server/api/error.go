@@ -16,7 +16,7 @@ type Error struct {
 	TimeStamp string `json:"timestamp,omitempty"`
 
 	// HTTP status code
-	StatusCode int `json:"status,omitempty"`
+	StatusCode int `json:"code,omitempty"`
 
 	// HTTP status text e.g. "Internal Server Error" or "Bad Request"
 	StatusText string `json:"error,omitempty"`
@@ -30,15 +30,14 @@ type Error struct {
 
 // NewErrorNow creates a new api error message that can be sent to the user.
 // It also has a timestamp of the current time.
-func NewErrorNow(code int,
-	msg, detail string) Error {
+func NewErrorNow(code int, msg, detail string) Error {
 	e := NewError(code, msg, detail)
 	e.TimeStamp = time.Now().Format(time.RFC3339)
 	return e
 }
 
 // NewError creates a new api error message that can be sent to the user.
-func NewError(code int,	msg, detail string) Error {
+func NewError(code int, msg, detail string) Error {
 	return Error{
 		StatusCode: code,
 		StatusText: http.StatusText(code),
@@ -103,6 +102,6 @@ func ErrWrap(err error) Error {
 	}
 
 	// log but don't leak information
-	log.Printf("api.ErrWrap called to wrap error: %s", err)
+	log.Println(err)
 	return NewErrorNow(http.StatusInternalServerError, "unknown error", "")
 }
