@@ -42,18 +42,39 @@ func (ep BaseEndpoint) Register() {
 
 // ServeHTTP responds to the API request and writes the result to a JSON.
 func (ep BaseEndpoint) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	writeJSON(w, ep.ResponseFunc(req))
+	writeInterface(w, ep.ResponseFunc(req))
+}
+
+func writeInterface(w http.ResponseWriter, d interface{}) {
+	switch v := d.(type) {
+	case Error:
+		if v.StatusCode != 0 {
+			w.WriteHeader(v.StatusCode)
+		}
+		writeJSON(w, d)
+	case Success:
+		if v.StatusCode != 0 {
+			w.WriteHeader(v.StatusCode)
+		}
+		writeJSON(w, d)
+	case []byte:
+		writeBytes(w, v)
+	case string:
+		writeBytes(w, []byte(v))
+	default:
+		writeJSON(w, d)
+	}
+}
+
+func writeBytes(w http.ResponseWriter, b []byte) {
+	// serve with correct MIME type
+	w.Header().Set("Content-Type", http.DetectContentType(b))
+
+	w.Write(b)
 }
 
 // writeJSON writes an interface as a JSON file to the ResponseWriter.
 func writeJSON(w http.ResponseWriter, d interface{}) {
-
-	// for errors, write status code
-	if err, ok := d.(Error); ok {
-		if err.StatusCode != 0 {
-			w.WriteHeader(err.StatusCode)
-		}
-	}
 
 	// serve with correct MIME type
 	w.Header().Set("Content-Type", "application/json")
@@ -64,6 +85,7 @@ func writeJSON(w http.ResponseWriter, d interface{}) {
 	if err := enc.Encode(d); err != nil {
 		log.Printf("failed to encode json: %+v", d)
 	}
+
 }
 
 // Respond responds to an API request.
