@@ -63,7 +63,7 @@ func GetUint64E(req *http.Request, key string) (uint64, error) {
 	return i, nil
 }
 
-func GetUint64(req *http.Request, key string) int {
+func GetUint64(req *http.Request, key string) uint64 {
 	i, _ := GetUint64E(req, key)
 	return i
 }
